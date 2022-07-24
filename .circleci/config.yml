@@ -16,20 +16,25 @@ jobs:
 workflows:  
   deploy_infrastructure:
     jobs:
-      - aws-cli-setup
+      - aws-cli-setup:
+          context: AWS
       - terraform/fmt:
           checkout: true
+          context: AWS
           requires:
             - aws-cli-setup
       - terraform/validate:
           checkout: true
+          context: AWS
           requires:
             - terraform/fmt
       - terraform/plan:
           checkout: true
+          context: AWS
           requires:
             - terraform/validate
       - terraform/apply:
+          context: AWS
           filters:
             branches:
               only: main
