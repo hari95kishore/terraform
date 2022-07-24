@@ -19,6 +19,8 @@ workflows:
       - aws-cli-setup
       - terraform/fmt:
           checkout: true
+          requires:
+            - aws-cli-setup
       - terraform/validate:
           checkout: true
           requires:
