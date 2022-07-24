@@ -12,31 +12,25 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY
           aws-secret-access-key: AWS_ACCESS_SECRET
           aws-region: AWS_REGION_NAME
+  terraform-run:
+    executor: terraform/default
+    steps:
+      - checkout
+      - terraform/init:
+          path: .
+      - terraform/validate:
+          path: .
+      - terraform/fmt:
+          path: .
+      - terraform/plan:
+          path: .
+      - terraform/apply:
+          path: .
 
 workflows:  
   deploy_infrastructure:
     jobs:
       - aws-cli-setup:
           context: AWS
-      - terraform/fmt:
-          checkout: true
+      - terraform-run:
           context: AWS
-          requires:
-            - aws-cli-setup
-      - terraform/validate:
-          checkout: true
-          context: AWS
-          requires:
-            - terraform/fmt
-      - terraform/plan:
-          checkout: true
-          context: AWS
-          requires:
-            - terraform/validate
-      - terraform/apply:
-          context: AWS
-          filters:
-            branches:
-              only: main
-          requires:
-            - terraform/plan
