@@ -34,3 +34,5 @@ workflows:
           context: AWS
       - terraform-run:
           context: AWS
+          requires:
+            - aws-cli-setup
