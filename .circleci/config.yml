@@ -16,15 +16,28 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - terraform/init:
+      - run:
+          command: >-
+            echo "credentials \"app.terraform.io\" {token =
+            \"$TERRAFORM_TOKEN\"}" > $HOME/.terraformrc
+          name: Create .terraformrc file locally
+      - terraform/install:
+          arch: amd64
+          os: linux
+          terraform_version: 1.1.6
+      - terraform/fmt:
           path: .
       - terraform/validate:
           path: .
-      - terraform/fmt:
+      - terraform/init:
+          backend: true
+          backend_config_file: "elopage/terraform.tfstate"
           path: .
       - terraform/plan:
+          backend_config_file: "elopage/terraform.tfstate"
           path: .
       - terraform/apply:
+          backend_config_file: "elopage/terraform.tfstate"
           path: .
 
 workflows:  
