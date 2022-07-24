@@ -14,12 +14,10 @@ jobs:
           aws-region: AWS_REGION_NAME
 
 workflows:  
-  aws-cli:
+  deploy_infrastructure:
     jobs:
       - aws-cli-setup:
           context: aws
-  deploy_infrastructure:
-    jobs:
       - terraform/fmt:
           checkout: true
       - terraform/validate:
