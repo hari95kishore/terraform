@@ -20,10 +20,10 @@ resource "aws_security_group" "alb-sg" {
 
 resource "aws_lb" "elopage_alb" {
   name               = "${var.service_name}-alb"
-  internal           = var.public_facing
+  internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
-  subnets            = module.vpc.public_subnets
+  subnets            = module.vpc.public_subnets[*]
   idle_timeout       = 300
 }
 
@@ -36,7 +36,7 @@ resource "aws_lb_target_group" "elopage_alb_tg" {
 }
 
 
-resource "aws_lb_listener" "http_redirect" {
+resource "aws_lb_listener" "http_forward" {
   load_balancer_arn = aws_lb.elopage_alb.arn
   port              = 80
   protocol          = "HTTP"

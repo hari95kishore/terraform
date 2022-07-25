@@ -8,6 +8,24 @@ module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
   repository_name = "calculator"
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 30 images",
+        selection = {
+          tagStatus     = "tagged",
+          tagPrefixList = ["v"],
+          countType     = "imageCountMoreThan",
+          countNumber   = 30
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
 }
 
 # security group of the application
@@ -42,8 +60,12 @@ module "calculator" {
   memory                 = 1024
   enable_execute_command = true
   security_groups        = [aws_security_group.calculator_sg.id]
+  ecs_subnets            = module.network.private_subnets
+  alb-tg-arn             = module.network.alb-tg-arn
+  alb_arn_suffix         = module.network.alb-arn-suffix
+  tg_arn_suffix          = module.network.tg-arn-suffix
   container_definitions = jsonencode([{
-    "image" : "calculator",
+    "image" : "330561029327.dkr.ecr.eu-central-1.amazonaws.com/calculator:latest",
     "name" : "calculator",
     "networkMode" : "awsvpc",
     "portMappings" : [{
