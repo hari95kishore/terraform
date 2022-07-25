@@ -52,13 +52,12 @@ resource "aws_security_group" "calculator_sg" {
 module "calculator" {
   source = "./modules/ecs"
 
-  service_name           = "calculator"
-  service_port           = 80
-  public_facing          = true
-  desired_count          = 2
-  cpu                    = 512
-  memory                 = 1024
-  enable_execute_command = true
+  service_name           = var.service_name
+  service_port           = var.service_port
+  desired_count          = var.desired_count
+  cpu                    = var.cpu
+  memory                 = var.memory
+  enable_execute_command = var.enable_execute_command
   security_groups        = [aws_security_group.calculator_sg.id]
   ecs_subnets            = module.network.private_subnets
   alb-tg-arn             = module.network.alb-tg-arn
