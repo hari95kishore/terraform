@@ -7,7 +7,7 @@ module "network" {
 module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "calculator"
+  repository_name = "${var.service_name}"
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
@@ -29,14 +29,14 @@ module "ecr" {
 }
 
 # security group of the application
-resource "aws_security_group" "calculator_sg" {
-  name   = "calculator-task-security-group"
+resource "aws_security_group" "ecs_sg" {
+  name   = "${var.service_name}-task-security-group"
   vpc_id = module.network.vpc_id
 
   ingress {
     protocol        = "tcp"
-    from_port       = 3000
-    to_port         = 3000
+    from_port       = var.container_port
+    to_port         = var.container_port
     security_groups = [module.network.alb-sg-id]
   }
 
@@ -64,12 +64,12 @@ module "calculator" {
   alb_arn_suffix         = module.network.alb-arn-suffix
   tg_arn_suffix          = module.network.tg-arn-suffix
   container_definitions = jsonencode([{
-    "image" : "330561029327.dkr.ecr.eu-central-1.amazonaws.com/calculator:latest",
-    "name" : "calculator",
+    "image" : "330561029327.dkr.ecr.eu-central-1.amazonaws.com/${var.service_name}:latest",
+    "name" : "${var.service_name}",
     "networkMode" : "awsvpc",
     "portMappings" : [{
-      "containerPort" : 3000,
-      "hostPort" : 3000
+      "containerPort" : var.container_port,
+      "hostPort" : var.container_port
     }]
 
   }])

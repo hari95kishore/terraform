@@ -6,6 +6,8 @@ variable "service_name" {}
 
 variable "service_port" {}
 
+variable "container_port" {}
+
 variable "cpu" {}
 
 variable "memory" {}
