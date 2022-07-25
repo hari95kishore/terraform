@@ -58,7 +58,7 @@ module "calculator" {
   cpu                    = var.cpu
   memory                 = var.memory
   enable_execute_command = var.enable_execute_command
-  security_groups        = [aws_security_group.calculator_sg.id]
+  security_groups        = [aws_security_group.ecs_sg.id]
   ecs_subnets            = module.network.private_subnets
   alb-tg-arn             = module.network.alb-tg-arn
   alb_arn_suffix         = module.network.alb-arn-suffix
