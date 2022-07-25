@@ -1,5 +1,3 @@
-variable "public_facing" {}
-
 variable "service_name" {}
 
 variable "service_port" {}
